@@ -42,7 +42,9 @@ func (s *MemoryStore) List(menuType string) []Menu {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	if menuType == "" {
-		return s.menus
+		out := make([]Menu, len(s.menus))
+		copy(out, s.menus) // ส่งสำเนาออกไป ไม่ส่งของจริง
+		return out
 	}
 	filtered := []Menu{}
 	for _, m := range s.menus {

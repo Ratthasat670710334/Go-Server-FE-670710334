@@ -15,14 +15,6 @@ type Handler struct {
 	Store store.MenuStore
 }
 
-func (h *Handler) Boom(w http.ResponseWriter, r *http.Request) {
-	panic("หม้อระเบิด")
-}
-
-func (h *Handler) Slow(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(3 * time.Second)
-	w.Write([]byte("จานที่ใช้เวลานานเสร็จแล้ว\n"))
-}
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -82,30 +74,13 @@ func (h *Handler) DeleteMenu(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (h *Handler) Routes() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /menu", h.ListMenu)
-	mux.HandleFunc("GET /menu/{id}", h.GetMenu)
-	mux.HandleFunc("POST /menu", h.CreateMenu)
-	mux.HandleFunc("DELETE /menu/{id}", h.DeleteMenu)
-	mux.HandleFunc("GET /boom", h.Boom)
-	mux.HandleFunc("GET /slow", h.Slow)
-	mux.HandleFunc("GET /slow-ctx", h.SlowCtx)
-	return mux
+func (h *Handler) Boom(w http.ResponseWriter, r *http.Request) {
+	panic("หม้อระเบิด")
 }
 
-func WithCORS(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-		w.Header().Set("Access-Control-Allow-Methods",
-			"GET, POST, PUT, PATCH, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
+func (h *Handler) Slow(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(3 * time.Second)
+	w.Write([]byte("จานที่ใช้เวลานานเสร็จแล้ว\n"))
 }
 
 func (h *Handler) SlowCtx(w http.ResponseWriter, r *http.Request) {
@@ -119,4 +94,16 @@ func (h *Handler) SlowCtx(w http.ResponseWriter, r *http.Request) {
 		log.Println("ลูกค้าเดินออกจากร้านแล้ว เลิกตุ๋น เหตุผล", ctx.Err())
 		return
 	}
+}
+
+func (h *Handler) Routes() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /menus", h.ListMenu)
+	mux.HandleFunc("GET /menus/{id}", h.GetMenu)
+	mux.HandleFunc("POST /menus", h.CreateMenu)
+	mux.HandleFunc("DELETE /menus/{id}", h.DeleteMenu)
+	mux.HandleFunc("GET /boom", h.Boom)
+	mux.HandleFunc("GET /slow", h.Slow)
+	mux.HandleFunc("GET /slow-ctx", h.SlowCtx)
+	return mux
 }
