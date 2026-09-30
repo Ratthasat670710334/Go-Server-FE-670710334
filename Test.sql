@@ -1,1 +1,0 @@
- SELECT id, name, price, type, stock FROM menus ORDER BY id;
