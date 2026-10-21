@@ -23,7 +23,6 @@ type MovieDetail struct {
     Detail *string `json:"detail"`
 }
 
-
 // SearchMovies ค่าจากผู้ใช้เดินทางผ่าน $1 แยกจากคำสั่งเสมอ
 func (s *Store) SearchMovies(ctx context.Context, q string) ([]Movie, error) {
     rows, err := s.Pool.Query(ctx,
@@ -52,11 +51,6 @@ func (s *Store) SearchMovies(ctx context.Context, q string) ([]Movie, error) {
     return out, rows.Err()
 }
 
-// MovieDetail คือหนังหนึ่งเรื่องพร้อมเรื่องย่อ ใช้กับหน้ารายละเอียด
-type MovieDetail struct {
-    Movie
-    Detail *string `json:"detail"`
-}
 
 // GetMovie หาหนังจากเลข ไม่พบตอบ ErrNotFound
 func (s *Store) GetMovie(ctx context.Context, id int64) (MovieDetail, error) {
