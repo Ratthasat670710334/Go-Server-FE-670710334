@@ -33,13 +33,6 @@ func main() {
     tickets := &auth.Issuer{Secret: []byte(secret), TTL: time.Hour}
     h := &handler.Handler{Store: &store.Store{Pool: pool}, Tickets: tickets}
 
-    mux := http.NewServeMux()
-    mux.HandleFunc("POST /api/auth/register", h.Register)
-    mux.HandleFunc("POST /api/auth/login", h.Login)
-    mux.HandleFunc("GET /api/movies", h.SearchMovies)
-    mux.HandleFunc("GET /api/movies/{id}", h.GetMovie)
-    mux.HandleFunc("GET /api/movies/{id}/reviews", h.ListReviews)
-
     origins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
     port := os.Getenv("PORT")
     if port == "" {
@@ -47,4 +40,11 @@ func main() {
     }
     log.Println("MovieHub API ฟังอยู่ที่ :"+port, "ต้อนรับ", origins)
     log.Fatal(http.ListenAndServe(":"+port, mw.Logging(mw.CORS(origins, mux))))
+
+    mux := http.NewServeMux()
+    mux.HandleFunc("POST /api/auth/register", h.Register)
+    mux.HandleFunc("POST /api/auth/login", h.Login)
+    mux.HandleFunc("GET /api/movies", h.SearchMovies)
+    mux.HandleFunc("GET /api/movies/{id}", h.GetMovie)
+    mux.HandleFunc("GET /api/movies/{id}/reviews", h.ListReviews)
 }
