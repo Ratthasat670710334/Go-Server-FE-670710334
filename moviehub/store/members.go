@@ -5,18 +5,19 @@ import (
     "errors"
     "time"
 
-    "github.com/jackc/pgx/v5"
-
     "github.com/jackc/pgx/v5/pgconn"
+    "github.com/jackc/pgx/v5"
 )
 
+var ErrEmailTaken = errors.New("email taken")
+
 type Member struct {
-    ID           int64      `json:"id"`
-    Email        string     `json:"email"`
-    DisplayName  string     `json:"displayName"`
-    Role         string     `json:"role"`
+    ID           int64  `json:"id"`
+    Email        string `json:"email"`
+    DisplayName  string `json:"displayName"`
+    Role         string `json:"role"`
     CreatedAt    *time.Time `json:"createdAt,omitempty"` // มีเฉพาะตอน list ให้ admin ดู
-    PasswordHash string     `json:"-"` // ไม่มีวันออกไปกับ JSON
+    PasswordHash string `json:"-"` // ไม่มีวันออกไปกับ JSON
 }
 
 func (s *Store) CreateMember(ctx context.Context, email, hash, name string) (Member, error) {
@@ -43,9 +44,6 @@ func (s *Store) MemberByEmail(ctx context.Context, email string) (Member, error)
     }
     return m, err
 }
-
-
-// ... CreateMember และ MemberByEmail ของเดิม ไม่แตะ ...
 
 // MemberByID ใช้กับ GET /api/me: เลขมาจากตั๋วที่ตรวจแล้ว
 func (s *Store) MemberByID(ctx context.Context, id int64) (Member, error) {

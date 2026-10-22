@@ -9,7 +9,7 @@ import (
     "time"
 
     "github.com/jackc/pgx/v5/pgxpool"
-    "github.com/joho/godotenv/autoload" // โหลด .env ให้เองถ้ามีไฟล์ (ในเครื่อง) บน Render ไม่มีไฟล์ก็เงียบ
+    _ "github.com/joho/godotenv/autoload" // โหลด .env ให้เองถ้ามีไฟล์ (ในเครื่อง) บน Render ไม่มีไฟล์ก็เงียบ
 
     "moviehub/auth"
     "moviehub/handler"
@@ -62,8 +62,6 @@ func main() {
     if port == "" {
         port = "8080"
     }
-    log.Println("MovieHub API ฟังอยู่ที่ :8080 ต้อนรับ", origins)
-    log.Fatal(http.ListenAndServe(":8080", mw.Logging(mw.CORS(origins, mux))))
     log.Println("MovieHub API ฟังอยู่ที่ :"+port, "ต้อนรับ", origins)
     log.Fatal(http.ListenAndServe(":"+port, mw.Logging(mw.CORS(origins, mux))))
 }
